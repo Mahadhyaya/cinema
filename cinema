@@ -1,0 +1,124 @@
+package cinema;
+import java.util.*;
+
+public class Cinema {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter the number of rows:");
+		int noOfRows = scanner.nextInt();
+		System.out.println("Enter the number of seats in each row:");
+		int noOfColumns = scanner.nextInt();
+		menu(noOfRows, noOfColumns);														//Menu function call
+	}
+	static void menu(int noOfRows, int noOfColumns) {
+		Scanner scanner = new Scanner(System.in);
+		String[][] twoDimArray = new String[noOfRows + 1][noOfColumns + 1];					//twoDimArray initialization
+				for (int i = 1; i <= noOfRows; i++) {
+					for (int j = 1; j <= noOfColumns; j++) {
+						twoDimArray[i][j] = "S";
+					}
+		}
+		int rNumber = 0;
+		int sNumber = 0;
+		int totalNoOfTickets = 0;
+		int totalNoOfSeats = noOfColumns * noOfRows;
+		int price = 0;
+		int income = 0;
+		do {
+			System.out.println("1. Show the seats\n2. Buy a ticket\n3. Statistics\n0. Exit");				//Menu
+			String choice = scanner.next();
+			switch (choice) {
+				case "1":
+					displaySeats(noOfRows, noOfColumns, twoDimArray);
+					break;
+				case "2":
+					while (true) {
+					System.out.println("Enter a row number:");
+					rNumber = scanner.nextInt();
+					System.out.println("Enter a seat number in that row:");
+					sNumber = scanner.nextInt();
+					try {
+						if (twoDimArray[rNumber][sNumber] != "B") {
+						if (rNumber <= noOfRows || sNumber <= noOfColumns) {
+							buyTicket(rNumber, sNumber, noOfRows, noOfColumns);
+							break;
+						} else {
+						}
+						} else {
+							System.out.println("That ticket has already been purchased!");
+						}
+					} catch (ArrayIndexOutOfBoundsException e) {
+						System.out.println("Wrong input!");
+					}
+				}
+					twoDimArray[rNumber][sNumber] = "B";
+					totalNoOfTickets++;
+					if (totalNoOfSeats <= 60) {
+	        			price = 10;
+					} else {
+						if (rNumber <= noOfRows / 2) {
+							price = 10;
+						} else {
+							price = 8;
+						}
+					}
+					income += price;
+					break;
+				case "3":
+					statistics(totalNoOfTickets, totalNoOfSeats, income);
+					totalIncome(totalNoOfSeats, noOfColumns, noOfRows);
+					break;
+				default:
+					return;
+			}
+		} while (true);
+	}
+
+	static void displaySeats(int noOfRows, int noOfColumns, String[][] twoDimArray) {		//displaySeats
+		System.out.println("Cinema:");
+		System.out.print(" ");
+		for (int i = 1; i <= noOfColumns; i++) {
+			System.out.print(i + " ");
+		}
+		System.out.println();
+		for (int r = 1; r < twoDimArray.length; r++) {
+			System.out.print(r + " ");
+			for (int j = 1; j <= noOfColumns; j++) {
+				System.out.print(twoDimArray[r][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	static void buyTicket(int rNumber, int sNumber, int noOfRows, int noOfColumns) {		//Ticket price calculation
+	        int price = 0;
+			if (rNumber > noOfRows && sNumber > noOfColumns) {
+				System.out.println("Wrong input!");
+			} else if (noOfRows * noOfColumns <= 60) {
+	            price = 10;
+				System.out.println("Ticket price:$" + price);
+	        } else {
+				System.out.println(rNumber <= noOfRows / 2 ? "Ticket price:$" + 10 : "Ticket price:$" + 8);
+			}
+    }
+
+	static void statistics(int totalNoOfTicketsSold, int totalNoOfSeats, int income) {		//statistics
+		System.out.println("Number of purchased tickets:" + totalNoOfTicketsSold);
+		System.out.printf("Percentage:%.2f%%%n", (float) 100 * totalNoOfTicketsSold / totalNoOfSeats);
+		System.out.println("Current income:$" + income);
+	}
+
+	static void totalIncome(int totalNoOfSeats, int noOfColumns, int noOfRows) {			//statistics
+		int totalIncome;
+		int totalIncome1 = 0;
+		int totalIncome2 = 0;
+		if (totalNoOfSeats <= 60) {
+			totalIncome = totalNoOfSeats * 10;
+		} else {
+			totalIncome1 = noOfRows / 2 * noOfColumns * 10;
+			totalIncome2 = (noOfRows - noOfRows / 2) * noOfColumns * 8;
+			totalIncome = totalIncome1 + totalIncome2;
+		}
+		System.out.println("Total income:$" + totalIncome);
+	}
+}
